@@ -71,4 +71,3 @@ function userInput()
     hold off;
 
 end
-
