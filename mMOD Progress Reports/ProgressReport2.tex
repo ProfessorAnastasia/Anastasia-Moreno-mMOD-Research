@@ -1,0 +1,219 @@
+\documentclass[letterpaper, 11pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{sansmathfonts}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[margin=0.5in, head=40pt, top=1in, bottom=1in]{geometry} 
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amsthm,amssymb,amsfonts, fancyhdr, color, comment, graphicx, environ, mathtools}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{siunitx}
+% \usepackage{ stmaryrd }
+\usepackage{ textcomp }
+\usepackage{import}
+\usepackage{xifthen}
+\usepackage{pdfpages}
+\usepackage{transparent}
+\usepackage{ar}
+\usepackage{multirow}
+\usepackage{lastpage}
+\usepackage{longtable}
+\usepackage{gensymb}
+\usepackage[version=4]{mhchem}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{physics}
+\usepackage{sectsty}
+\usepackage{float}
+
+\captionsetup{justification=centering,format=hang,labelsep=period,font={footnotesize}, labelfont={rm}}
+
+% \renewcommand*\familydefault{\sfdefault} 
+
+% \usepackage{bm}
+\newcommand{\vect}[1]{\boldsymbol{\mathbf{#1}}}
+
+\definecolor{scarlet}{HTML}{CC0033}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=blue,
+}
+
+\newcommand{\incfig}[1]{%
+	\def\svgwidth{\columnwidth}
+	\import{./figures/}{#1.pdf_tex}
+}
+\graphicspath{ {./figures/} }
+\pagestyle{fancy}
+
+\global\mdfdefinestyle{equationbox}{%
+	linecolor=black,linewidth=0.5pt,%
+	backgroundcolor=white
+}
+
+
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+%
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+\usepackage{lmodern}
+% \usepackage[math]{iwona}
+\usepackage{breqn}
+\usepackage{mdframed}
+\usepackage[subnum]{cases}
+\usepackage{pdfpages}
+\usepackage{soul}
+\usepackage{nicematrix}
+\usepackage[ruled, linesnumbered]{algorithm2e}
+\lhead{Rutgers University mMOD - Anastasia Moreno}
+\rhead{Inverse Isoparametric Mapping- \thepage \space of \pageref{LastPage}} 
+\lfoot{}
+\chead{}
+\cfoot{Proprietary to the mMOD Group.}
+% \usepackage[
+%     backend=bibtex,
+%     style=ieee,
+% ]{biblatex}
+% \addbibresource{./lib.bib}
+\makeatletter
+\DeclareRobustCommand{\vol}{\text{\volumedash}V}
+\newcommand{\volumedash}{%
+	\makebox[0pt][l]{%
+		\ooalign{\hfil\hphantom{$\m@th V$}\hfil\cr\kern0.08em--\hfil\cr}%
+	}%
+}
+\makeatother
+
+\newcommand{\sgrav}{\ensuremath{\mathrm{SG}}}
+\newcommand{\half}{\ensuremath{\frac{1}{2}}}
+\newcommand{\tder}{\ensuremath{\frac{d}{dt}}}
+\newcommand{\tsder}{\ensuremath{\frac{d^2}{dt^2}}}
+\newcommand{\pde}[2]{\ensuremath{\frac{\partial#1}{\partial#2}}}
+\newcommand{\ode}[2]{\ensuremath{\frac{d #1}{d #2}}}
+
+\newcommand{\ihat}{\ensuremath{\vb{\hat{i}}}}
+\newcommand{\jhat}{\ensuremath{\vb{\hat{j}}}}
+\newcommand{\khat}{\ensuremath{\vb{\hat{k}}}}
+\newcommand{\Ihat}{\ensuremath{\vb{\hat{I}}}}
+\newcommand{\Jhat}{\ensuremath{\vb{\hat{J}}}}
+\newcommand{\Khat}{\ensuremath{\vb{\hat{K}}}}
+\newcommand{\qbarinf}{\ensuremath{\bar{q}_\infty}}
+\newcommand{\qbar}{\ensuremath{\bar{q}}}
+\newcommand{\rinf}{\ensuremath{\bar{\rho}_\infty}}
+\newcommand{\meanchord}{\ensuremath{\bar{c}}}
+\newcommand{\CMqc}{\ensuremath{C_{M_{c/4}}}}
+\newcommand{\Cmqc}{\ensuremath{C_{m_{c/4}}}}
+\newcommand{\CLa}{\ensuremath{C_{L_{\alpha}}}}
+\newcommand{\Cla}{\ensuremath{C_{l_{\alpha}}}}
+\newcommand{\CL}{\ensuremath{C_{L}}}
+\newcommand{\Cl}{\ensuremath{C_{l}}}
+\newcommand{\Mqc}{\ensuremath{M_{c/4}}}
+\newcommand{\CD}{\ensuremath{C_{D}}}
+\newcommand{\CDo}{\ensuremath{C_{D_0}}}
+\newcommand{\CDI}{\ensuremath{C_{D,i}}}
+\newcommand{\TSFC}{\ensuremath{\mathrm{TSFC}}}
+\newcommand{\Vinf}{\ensuremath{V_{\infty}}}
+
+\newcommand{\question}[1]{\colorbox{Cyan}{\texttt{Question #1}}}
+\newcommand{\skewsym}[1]{\ensuremath{[\tilde{#1}]}}
+\usepackage{matlab-prettifier}
+
+\definecolor{backcolour}{rgb}{0.98,0.98,0.98}
+\definecolor{darkgrey}{rgb}{0.1,0.1,0.1}
+\lstdefinestyle{matlab}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{LimeGreen}\itshape,
+	keywordstyle=\color{RoyalBlue},
+	numberstyle=\tiny\color{darkgrey},
+	stringstyle=\color{Thistle},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\mdfsetup{%
+	linecolor=black,
+	linewidth=1pt,
+	backgroundcolor=blue!5,
+	roundcorner=0pt}
+\lstset{style=matlab}
+
+
+
+\begin{document}
+	{
+		\LARGE
+		\textbf{Inverse Isoparametric Mapping of Trilinear Hexahedral Element}
+		
+	}
+	\section{Introduction}
+	This document explains the progress of the MATLAB implementation of an interactive GUI that maps a physical hexahedral element to its corresponding parent (or parametric) domain. The transformation utilizes the Newton–Raphson iterative scheme. The MATLAB code dynamically computes the parent coordinates $(\xi, \eta, \zeta)$ of a physical point selected via sliders and ensures that the mapping remains within valid boundaries.
+	
+	\section{Hexahedral Shape Functions and Isoparametric Mapping}
+	A hexahedral element is defined by eight nodes, with standard trilinear shape functions given by:
+	\begin{equation}
+		N_i(\xi, \eta, \zeta) = \frac{1}{8} (1 + \xi \xi_i)(1 + \eta \eta_i)(1 + \zeta \zeta_i), \quad i = 1,2,\dots,8
+	\end{equation}
+	where $\xi_i, \eta_i, \zeta_i$ represent the coordinates of node $i$ in the parent domain.
+	
+	The forward mapping from parent to physical space is given by:
+	\begin{equation}
+		\mathbf{x} = \sum_{i=1}^{8} N_i(\xi, \eta, \zeta) \mathbf{x}_i,
+	\end{equation}
+	where $\mathbf{x}_i = (X_i, Y_i, Z_i)$ are the physical coordinates of node $i$.
+	
+	\section{Inverse Mapping using Newton-Raphson Iteration}
+	Given a physical point $\mathbf{x} = (X,Y,Z)$, we seek the corresponding parent coordinates $(\xi, \eta, \zeta)$. This requires solving:
+	\begin{equation}
+		\mathbf{r}(\xi, \eta, \zeta) = \sum_{i=1}^{8} N_i(\xi, \eta, \zeta) \mathbf{x}_i - \mathbf{x} = 0.
+	\end{equation}
+	Using Newton–Raphson iteration:
+	\begin{equation}
+		\mathbf{J} \Delta \mathbf{p} = -\mathbf{r},
+	\end{equation}
+	where $\mathbf{J}$ is the Jacobian matrix:
+	\begin{equation}
+		\mathbf{J} = \begin{bmatrix} \frac{\partial x}{\partial \xi} & \frac{\partial y}{\partial \xi} & \frac{\partial z}{\partial \xi} \ \frac{\partial x}{\partial \eta} & \frac{\partial y}{\partial \eta} & \frac{\partial z}{\partial \eta} \ \frac{\partial x}{\partial \zeta} & \frac{\partial y}{\partial \zeta} & \frac{\partial z}{\partial \zeta} \end{bmatrix}.
+	\end{equation}
+	
+	Each partial derivative in $\mathbf{J}$ is computed as:
+	\begin{equation}
+		\frac{\partial x}{\partial \xi} = \sum_{i=1}^{8} \frac{\partial N_i}{\partial \xi} X_i, \quad \text{similarly for } y \text{ and } z.
+	\end{equation}
+	
+	The Newton-Raphson update is given by:
+	\begin{equation}
+		\begin{bmatrix} \xi^{(k+1)} \ \eta^{(k+1)} \ \zeta^{(k+1)} \end{bmatrix} = \begin{bmatrix} \xi^{(k)} \ \eta^{(k)} \ \zeta^{(k)} \end{bmatrix} - \mathbf{J}^{-1} \mathbf{r}.
+	\end{equation}
+	
+	Iterations continue until $||\mathbf{r}||$ is below a specified tolerance.
+	
+	\section{Handling Boundary Clamping}
+	Since the sliders are bounded by the axis-aligned bounding box, some selected points may lie outside the hexahedral boundary. If computed $(\xi, \eta, \zeta)$ values exceed $[-1,1]$, they are clamped, and the corrected physical coordinates are recomputed using the forward mapping:
+	\begin{equation}
+		\mathbf{x}{\text{new}} = \sum{i=1}^{8} N_i(\xi_{\text{clamped}}, \eta_{\text{clamped}}, \zeta_{\text{clamped}}) \mathbf{x}_i.
+	\end{equation}
+	This ensures the selected point remains inside the hexahedron.
+
+	
+	\end{document}

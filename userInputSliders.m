@@ -4,8 +4,8 @@ clc; clear;
     node_coordinates = [...
         0.00 0.00 0.00;  % Node 1
         2.00 0.00 0.00;  % Node 2
-        2.00 1.00 0.00;  % Node 3
-        0.00 1.00 0.00;  % Node 4
+        2.50 1.00 0.00;  % Node 3
+        0.00 2.00 0.00;  % Node 4
         0.00 0.00 1.00;  % Node 5
         2.00 0.00 1.20;  % Node 6
         2.00 1.00 1.20;  % Node 7
@@ -146,3 +146,38 @@ clc; clear;
     % Initial update
     updatePlot();
 end
+
+function N = shapeFunctionsHexahedral(xi, eta, zeta)
+    N = zeros(1,8);
+    N(1) = 0.125 * (1 - xi) * (1 - eta) * (1 - zeta); % N1
+    N(2) = 0.125 * (1 + xi) * (1 - eta) * (1 - zeta); % N2
+    N(3) = 0.125 * (1 + xi) * (1 + eta) * (1 - zeta); % N3
+    N(4) = 0.125 * (1 - xi) * (1 + eta) * (1 - zeta); % N4
+    N(5) = 0.125 * (1 - xi) * (1 - eta) * (1 + zeta); % N5
+    N(6) = 0.125 * (1 + xi) * (1 - eta) * (1 + zeta); % N6
+    N(7) = 0.125 * (1 + xi) * (1 + eta) * (1 + zeta); % N7
+    N(8) = 0.125 * (1 - xi) * (1 + eta) * (1 + zeta); % N8
+end
+
+function plotHexahedralEdges(corners, colorSpec, lineWidth)
+    edges = [1 2; 2 3; 3 4; 4 1; ...  % bottom face
+             5 6; 6 7; 7 8; 8 5; ...  % top face
+             1 5; 2 6; 3 7; 4 8 ];    % vertical edges
+    
+    for e = 1:size(edges,1)
+        i1 = edges(e,1);
+        i2 = edges(e,2);
+        pts = [corners(i1,:); corners(i2,:)];
+        plot3(pts(:,1), pts(:,2), pts(:,3), '-', 'Color',colorSpec, 'LineWidth',lineWidth);
+    end
+end
+
+function weightedSum = isoparametricWeightedSum(param_coordinates, node_coordinates)
+    xi = param_coordinates(1);
+    eta = param_coordinates(2);
+    zeta = param_coordinates(3);
+
+    N=shapeFunctionsHexahedral(xi, eta, zeta);
+    weightedSum = N * node_coordinates;
+end
+
