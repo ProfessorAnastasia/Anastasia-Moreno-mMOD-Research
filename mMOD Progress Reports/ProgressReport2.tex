@@ -21,7 +21,6 @@
 \usepackage{xifthen}
 \usepackage{pdfpages}
 \usepackage{transparent}
-\usepackage{ar}
 \usepackage{multirow}
 \usepackage{lastpage}
 \usepackage{longtable}
@@ -78,8 +77,8 @@
 \usepackage{soul}
 \usepackage{nicematrix}
 \usepackage[ruled, linesnumbered]{algorithm2e}
-\lhead{Rutgers University mMOD - Anastasia Moreno}
-\rhead{Inverse Isoparametric Mapping- \thepage \space of \pageref{LastPage}} 
+\lhead{Rutgers University}
+\rhead{ Anastasia Moreno \thepage \space of \pageref{LastPage}} 
 \lfoot{}
 \chead{}
 \cfoot{Proprietary to the mMOD Group.}
@@ -158,62 +157,119 @@
 	roundcorner=0pt}
 \lstset{style=matlab}
 
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
 
+\lstset{ %
+	backgroundcolor=\color{white},
+	basicstyle=\ttfamily\footnotesize,
+	breaklines=true,
+	captionpos=b,
+	commentstyle=\color{mygreen},
+	keywordstyle=\color{blue},
+	stringstyle=\color{mymauve},
+	numbers=left,
+	numberstyle=\tiny\color{mygray},
+	frame=single
+}
 
 \begin{document}
 	{
 		\LARGE
-		\textbf{Inverse Isoparametric Mapping of Trilinear Hexahedral Element}
+		\textbf{Progress Report 3 - Standard Function and E3nn Studies}
 		
 	}
-	\section{Introduction}
-	This document explains the progress of the MATLAB implementation of an interactive GUI that maps a physical hexahedral element to its corresponding parent (or parametric) domain. The transformation utilizes the Newton–Raphson iterative scheme. The MATLAB code dynamically computes the parent coordinates $(\xi, \eta, \zeta)$ of a physical point selected via sliders and ensures that the mapping remains within valid boundaries.
+		
+		\section*{Objective}
+		The goal of this project is to numerically determine the parametric coordinates \((\xi, \eta, \zeta)\) of a point within a trilinear hexahedral finite element, given its physical space coordinates \(\mathbf{x}_{\text{phys}} = (x, y, z)\). This process is fundamental in finite element analysis (FEA), where transformations between the reference (parent) domain and the physical domain are essential for interpolation, numerical integration, and applying boundary conditions.
+		
+		\section*{Understanding the Geometry and Mapping}
+		In finite elements, we define elements in a simpler, idealized coordinate system called the \textit{reference domain} or \textit{parent domain}. For 3D hexahedral elements, this domain is the cube \([-1, 1]^3\). Each point \((\xi, \eta, \zeta)\) in this cube can be mapped to a \textit{physical domain}, which represents the actual shape and location of the element in the mesh.
+		
+		To perform this mapping, we use shape functions based on the trilinear interpolation scheme. Each shape function \(N_i(\xi, \eta, \zeta)\) is associated with a node of the hexahedron and satisfies:
+		\begin{itemize}
+			\item \(N_i = 1\) at node \(i\)
+			\item \(N_i = 0\) at all other nodes
+		\end{itemize}
+		
+		The physical location \(\mathbf{x}(\xi, \eta, \zeta)\) is given by:
+		\[
+		\mathbf{x}(\xi, \eta, \zeta) = \sum_{i=1}^{8} N_i(\xi, \eta, \zeta) \cdot \mathbf{x}_i
+		\]
+		
+		This is the \textit{forward mapping}. The inverse mapping --- finding \((\xi, \eta, \zeta)\) for a given \(\mathbf{x}_{\text{phys}}\) --- must be done numerically because of the nonlinearity of \(N_i\).
+		
+		\section*{Shape Functions}
+		Each \(N_i\) is a product of linear terms:
+		\[
+		N_1(\xi, \eta, \zeta) = \frac{1}{8}(1 - \xi)(1 - \eta)(1 - \zeta)
+		\]
+		with analogous forms for the other 7 nodes.
+		
+		\section*{Why We Need the Inverse Mapping}
+		To evaluate integrals using Gauss quadrature or determine interpolation values at specific physical points, we must express those points in the reference domain. Hence, the inverse mapping is necessary.
+		
+		\section*{Newton-Raphson Method}
+		We define the residual function:
+		\[
+		\mathbf{r}(\xi, \eta, \zeta) = \mathbf{x}_{\text{phys}} - \mathbf{x}(\xi, \eta, \zeta)
+		\]
+		and seek its root:
+		\[
+		\mathbf{r}(\xi, \eta, \zeta) = 0 \quad \Leftrightarrow \quad \mathbf{x}(\xi, \eta, \zeta) = \mathbf{x}_{\text{phys}}
+		\]
+		
+		This nonlinear system is solved using the Newton-Raphson method. At each iteration \(k\):
+		\begin{align*}
+			\mathbf{x}^{(k)} &= \sum_i N_i(\xi^{(k)}, \eta^{(k)}, \zeta^{(k)}) \cdot \mathbf{x}_i \\
+			\mathbf{r}^{(k)} &= \mathbf{x}_{\text{phys}} - \mathbf{x}^{(k)} \\
+			\Delta \boldsymbol{\xi} &= J^{-1} \cdot \mathbf{r}^{(k)} \\
+			\begin{bmatrix} \xi \\ \eta \\ \zeta \end{bmatrix}^{(k+1)} &= \begin{bmatrix} \xi \\ \eta \\ \zeta \end{bmatrix}^{(k)} + \Delta \boldsymbol{\xi}
+		\end{align*}
+		
+		We repeat until \(\|\mathbf{r}^{(k)}\|\) is sufficiently small.
+		
+		\section*{Jacobian Matrix}
+		The Jacobian matrix \(J\) describes the derivative of the physical coordinates with respect to the parametric coordinates:
+		\[
+		J = 
+		\begin{bmatrix}
+			\frac{\partial x}{\partial \xi} & \frac{\partial x}{\partial \eta} & \frac{\partial x}{\partial \zeta} \\
+			\frac{\partial y}{\partial \xi} & \frac{\partial y}{\partial \eta} & \frac{\partial y}{\partial \zeta} \\
+			\frac{\partial z}{\partial \xi} & \frac{\partial z}{\partial \eta} & \frac{\partial z}{\partial \zeta}
+		\end{bmatrix}
+		\]
+		
+		It is computed as:
+		\[
+		J = \sum_{i=1}^8 \nabla N_i(\xi, \eta, \zeta) \otimes \mathbf{x}_i
+		\]
+		where \(\nabla N_i = \left[\frac{\partial N_i}{\partial \xi}, \frac{\partial N_i}{\partial \eta}, \frac{\partial N_i}{\partial \zeta} \right]\), and \(\otimes\) is the outer product.
+		
+		\section*{Implementation Summary}
+		\begin{itemize}
+			\item \textbf{Step 1: Input validation.} Check shape of input arrays.
+			\item \textbf{Step 2: Bounding box check.} Reject points obviously outside the element.
+			\item \textbf{Step 3: Newton-Raphson.}
+			\begin{itemize}
+				\item Initialize \((\xi, \eta, \zeta) = (0, 0, 0)\)
+				\item Evaluate shape functions and Jacobian
+				\item Update until convergence
+			\end{itemize}
+			\item \textbf{Step 4: Validate solution.} Ensure final \((\xi, \eta, \zeta) \in [-1, 1]^3\)
+		\end{itemize}
+		
+		\section*{Conceptual Summary}
+		\begin{itemize}
+			\item The residual \(\mathbf{r} = \mathbf{x}_{\text{phys}} - \mathbf{x}(\xi, \eta, \zeta)\) is driven toward zero.
+			\item The Jacobian gives local transformation info.
+			\item Convergence depends on the element’s shape and the initial guess.
+		\end{itemize}
+		
+		This work implements a core capability used throughout finite element software and analysis.
+		
+	\end{document}
 	
-	\section{Hexahedral Shape Functions and Isoparametric Mapping}
-	A hexahedral element is defined by eight nodes, with standard trilinear shape functions given by:
-	\begin{equation}
-		N_i(\xi, \eta, \zeta) = \frac{1}{8} (1 + \xi \xi_i)(1 + \eta \eta_i)(1 + \zeta \zeta_i), \quad i = 1,2,\dots,8
-	\end{equation}
-	where $\xi_i, \eta_i, \zeta_i$ represent the coordinates of node $i$ in the parent domain.
-	
-	The forward mapping from parent to physical space is given by:
-	\begin{equation}
-		\mathbf{x} = \sum_{i=1}^{8} N_i(\xi, \eta, \zeta) \mathbf{x}_i,
-	\end{equation}
-	where $\mathbf{x}_i = (X_i, Y_i, Z_i)$ are the physical coordinates of node $i$.
-	
-	\section{Inverse Mapping using Newton-Raphson Iteration}
-	Given a physical point $\mathbf{x} = (X,Y,Z)$, we seek the corresponding parent coordinates $(\xi, \eta, \zeta)$. This requires solving:
-	\begin{equation}
-		\mathbf{r}(\xi, \eta, \zeta) = \sum_{i=1}^{8} N_i(\xi, \eta, \zeta) \mathbf{x}_i - \mathbf{x} = 0.
-	\end{equation}
-	Using Newton–Raphson iteration:
-	\begin{equation}
-		\mathbf{J} \Delta \mathbf{p} = -\mathbf{r},
-	\end{equation}
-	where $\mathbf{J}$ is the Jacobian matrix:
-	\begin{equation}
-		\mathbf{J} = \begin{bmatrix} \frac{\partial x}{\partial \xi} & \frac{\partial y}{\partial \xi} & \frac{\partial z}{\partial \xi} \ \frac{\partial x}{\partial \eta} & \frac{\partial y}{\partial \eta} & \frac{\partial z}{\partial \eta} \ \frac{\partial x}{\partial \zeta} & \frac{\partial y}{\partial \zeta} & \frac{\partial z}{\partial \zeta} \end{bmatrix}.
-	\end{equation}
-	
-	Each partial derivative in $\mathbf{J}$ is computed as:
-	\begin{equation}
-		\frac{\partial x}{\partial \xi} = \sum_{i=1}^{8} \frac{\partial N_i}{\partial \xi} X_i, \quad \text{similarly for } y \text{ and } z.
-	\end{equation}
-	
-	The Newton-Raphson update is given by:
-	\begin{equation}
-		\begin{bmatrix} \xi^{(k+1)} \ \eta^{(k+1)} \ \zeta^{(k+1)} \end{bmatrix} = \begin{bmatrix} \xi^{(k)} \ \eta^{(k)} \ \zeta^{(k)} \end{bmatrix} - \mathbf{J}^{-1} \mathbf{r}.
-	\end{equation}
-	
-	Iterations continue until $||\mathbf{r}||$ is below a specified tolerance.
-	
-	\section{Handling Boundary Clamping}
-	Since the sliders are bounded by the axis-aligned bounding box, some selected points may lie outside the hexahedral boundary. If computed $(\xi, \eta, \zeta)$ values exceed $[-1,1]$, they are clamped, and the corrected physical coordinates are recomputed using the forward mapping:
-	\begin{equation}
-		\mathbf{x}{\text{new}} = \sum{i=1}^{8} N_i(\xi_{\text{clamped}}, \eta_{\text{clamped}}, \zeta_{\text{clamped}}) \mathbf{x}_i.
-	\end{equation}
-	This ensures the selected point remains inside the hexahedron.
-
 	
 	\end{document}

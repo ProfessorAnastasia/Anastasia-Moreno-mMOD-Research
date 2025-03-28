@@ -1,4 +1,4 @@
-function userInputSlidersPhysicalToParentMapping_NewtonRaphson_Bounded()
+function userInputSlidersPhysicalToParentMapping()
     clc; clear;
     % --- Define physical node coordinates for our hexahedron ---
     node_coordinates = [...

@@ -1,4 +1,4 @@
-function userInputSlidersPhysicalToParentMapping_NewtonRaphson_Bounded()
+function userInputSlidersPhysicalToParentMapping()
     clc; clear;
     % --- Define physical node coordinates for our hexahedron ---
     node_coordinates = [...
@@ -233,7 +233,7 @@ function param_coords = NewtonRaphsonInverseMapping(phys_point, node_coords)
         if norm(r) < tol
             break;
         end
-        % Get derivatives of shape functions (our quick derivative calculator)
+        % Get derivatives of shape functions 
         [dN_dxi, dN_deta, dN_dzeta] = ShapeFunctionDerivatives(xi, eta, zeta);
         % Assemble Jacobian matrix (3x3) by summing contributions from each node
         J = zeros(3,3);
